@@ -322,7 +322,11 @@ class PhotoViewCoreState extends State<PhotoViewCore>
             final PhotoViewControllerValue value = snapshot.data!;
             final useImageScale = widget.filterQuality != FilterQuality.none;
 
-            final computedScale = useImageScale ? 1.0 : scale;
+            // Always read `scale`, even when it is not used in the matrix, so
+            // a pending recalc (see markNeedsScaleRecalc) is consumed here, on
+            // build, and not later on top of a scale written from outside.
+            final currentScale = scale;
+            final computedScale = useImageScale ? 1.0 : currentScale;
 
             final matrix = Matrix4.identity()
               ..translate(value.position.dx, value.position.dy)
